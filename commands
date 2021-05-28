@@ -1,0 +1,94 @@
+username: docker
+password: tcuser
+
+eksctl # Для работа Amazon EKS
+minikube # Для локального использования
+
+
+
+###################Поднятие Кластера в AWS Elastic Kubernetes Service - EKS####################
+https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
+eksctl version
+export AWS_ACCESS_KEY_ID=AKI
+export AWS_SECRET_ACCESS_KEY=+
+export AWS_DEFAULT_REGION=us-east-2
+
+
+eksctl create cluster --name denis-k8s # Создать кластер AWS
+eksctl create cluster -f mycluster.yaml #Создать кластер из YAML
+
+
+########### Создание и управление pods
+kubectl get nodes  #посмотреть ноды
+kubectl run app-kuber-1 --generator=run-pod/v1 --image=httpd:latest --port=80 # Создание pods (скачивает контейнер из Docker Hub)
+kubectl get pods # Посмотреть статус pods
+kubectl delete pods app-kuber-1  #Удалить pods
+kubectl describe pods app-kuber-1 # Посмотреть информацию pods
+kubectl exec -it app-kuber-1 -- /bin/bash # Войти внутрь контейнера
+kubectl logs app-kuber-1 # Логи Pod
+kubectl port-forward app-kuber-1 11111:8000 # Проброс портов 11111-локальный 8000-Pod
+kubectl apply -f pod-mywev-ver1.yaml # Создание Pod из дескриптора YAML
+kubectl delete -f pod-mywev-ver1.yaml  #Удалить pods
+
+##############Создание и Управление - DEPLOYMENTS
+kubectl create deployment denis-deployment --image adv4000/k8sphp:latest #Создать deployment
+kubectl get deploy
+kubectl describe deployments denis-deployment # Можно посмотреть полную информацию о deployments (названия контейнера, image и т.д.  ).
+kubectl scale deployment denis-deployment --replicas 4 # Масштабировать deployment denis-deployment на 4 nodes (последующим если удалить, автоматический будет поддерживаться 4 Pods)
+kubectl autoscale deployment denis-deployment --min=4 --max=6 --cpu-percent=80 # (horizontalpodautoscaler - hpa) Всегда будет поддерживать от 4 до 6 Pods, в зависимости от загруженность ЦП
+kubectl get hpa # Посотреть какие параметры для автомасштабирования  (horizontalpodautoscaler - hpa)
+kubectl rollout history deployment/denis-deployment # Показывает историю  deployment
+kubectl rollout status deployment/denis-deployment # Показывает статус deployment
+kubectl set image deployment/denis-deployment k8sphp=adv4000/k8sphp:version1 --record # Устанавливаем новый image на нашем существующем deployment. k8sphp - названия контейнера.
+kubectl set image deployment/denis-deployment k8sphp=adv4000/k8sphp:version2 --record # Новый deployment
+kubectl rollout undo deployment/denis-deployment --to-revision=3 # Возвращает на шаг назад из adv4000/k8sphp:version2 на adv4000/k8sphp:version1
+kubectl rollout restart deployment/denis-deployment # Пересоздается новый deployment/denis-deployment
+kubectl apply -f deployment-1-simple.yaml # 1 - реплика
+kubectl apply -f deployment-2-replicas.yaml # 3 - реплика
+kubectl apply -f deployment-3-autoscaling.yaml # Автомасштабирование
+kubectl delete deployment --all # Удалить все deployment
+
+
+
+
+minikube start --profile k8s-cluster-1 - создать кластер
+/home/aynur/.kube - хранятся конфигурационные файлы
+kubectl config get-contexts - посмотреть какие есть кластеры
+kubectl config get-users - посмотреть какие есть пользоватли
+kubectl config set-credentials temp --username=temp --password=superroot - создать пользователя
+kubectl config use-context k8s-cluster-1 - переключить кластер
+kubectl get pods --all-namespaces - посмотреть все поды
+kubectl get nodes  - посмотреть ноды
+kubectl config delete-context k8s-cluster-1 - удалить кластер
+kubectl apply -f sa-dash.yaml # Создание Pod из дескриптора YAML
+
+##################### Lesson 6 Создание объекта Pod. Запуск контейнеров в Kubernetes########################
+kubectl run app-kuber-1 --image=bokovets/kuber:0.1 --port=8000 # Создание pods (скачивает контейнер из Docker Hub)
+kubectl get pods # Посмотреть статус pods
+kubectl describe pods app-kuber-1 # Посмотреть информацию pods
+kubectl exec -it app-kuber-1 -- /bin/bash # Войти внутрь контейнера
+kubectl exec -it app-kuber-1 --container app-kuber-1 -- /bin/bash # Войти внутрь контейнера, если в одном Pod несколько контейнера
+nano kuber-pod.yaml # Создание Pod из дескриптора YAML (имя может быть любое)
+kubectl apply -f kuber-pod.yaml # Создание Pod из дескриптора YAML
+kubectl get pod app-kuber-1 -o yaml # Посмотреть параметры в виде yaml
+kubectl port-forward app-kuber-1 11111:8000 # Проброс портов 11111-локальный 8000-Pod
+kubectl logs app-kuber-1 # Логи Pod
+#### Запуск Dashboard UI ################
+kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
+kubectl proxy
+http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/.
+###
+
+
+##################### Lesson 7  Метки, аннотации и пространства имён в Kubernetes ########################
+kubectl label po app-kuber-1 environment=dev #Добавить метку ключ-значение (environment=dev)
+kubectl get po -L app, environment, run # Select по меткам
+kubectl get po -L '!run' # Select по меткам где нет run
+kubectl get po -l app=http-server # Выборка по конкретному ключу, можно также =!
+kubectl apply -f kuber-pod.yaml # Создание Pod из дескриптора YAML
+kubectl label nodes -l gpu=true # Метка nodes
+kubectl describe node minikube # Посмотреть информацию node
+kubectl delete po -l run-app-kuber-manual #удалить Pod run-app-kuber-manual
+kubectl get pods --all-namespaces - посмотреть все поды
