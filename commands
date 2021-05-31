@@ -29,7 +29,7 @@ kubectl describe pods app-kuber-1 # Посмотреть информацию po
 kubectl exec -it app-kuber-1 -- /bin/bash # Войти внутрь контейнера
 kubectl logs app-kuber-1 # Логи Pod
 kubectl port-forward app-kuber-1 11111:8000 # Проброс портов 11111-локальный 8000-Pod
-kubectl apply -f pod-mywev-ver1.yaml # Создание Pod из дескриптора YAML
+kubectl apply -f pod-myweb-ver1.yaml # Создание Pod из дескриптора YAML
 kubectl delete -f pod-mywev-ver1.yaml  #Удалить pods
 
 ##############Создание и Управление - DEPLOYMENTS
@@ -49,6 +49,40 @@ kubectl apply -f deployment-1-simple.yaml # 1 - реплика
 kubectl apply -f deployment-2-replicas.yaml # 3 - реплика
 kubectl apply -f deployment-3-autoscaling.yaml # Автомасштабирование
 kubectl delete deployment --all # Удалить все deployment
+
+#####################Создание и Управление - SERVICES
+kubectl create deployment denis-deployment --image adv4000/k8sphp:latest	#Создать Deployment из Docker Image adv4000/k8sphp:latest
+kubectl get deployment	#Показать все Depoyments
+kubectl scale deployment denis-deployment --replicas 4	#Создать ReplicaSets
+kubectl expose deployment denis-deployment --type=ClusterIP --port 80	#Создать Service типа ClusterIP для Deployment
+kubectl expose deployment denis-deployment --type=NodePort --port 80	#Создать Service типа NodePort для Deployment
+kubectl expose deployment denis-deployment --type=LoadBalancer --port 80	#Создать Service типа LoadBalancer  для Deployment
+kubectl get services #Показать все Services
+kubectl get svc	#Показать все Services
+kubectl describe nodes | grep ExternalIP	#Показать External IP со всех Worker Nodes
+
+##################Создание и Управление - INGRESS Controllers 
+kubectl apply -f https://projectcontour.io/quickstart/contour.yaml	#Создать Ingress Controller Contour
+kubectl get services -n projectcontour envoy -o wide	#Показать Ingess Controller Load Balancer данные
+kubectl create deployment main    --image=adv4000/k8sphp:latest 	#Создать Deployment
+kubectl create deployment web1    --image=adv4000/k8sphp:version1	#Создать Deployment
+kubectl create deployment web2    --image=adv4000/k8sphp:version2	#Создать Deployment
+kubectl scale deployment main    --replicas 2	#Создать ReplicaSets
+kubectl scale deployment web1    --replicas 2	#Создать ReplicaSets
+kubectl scale deployment web2    --replicas 2	#Создать ReplicaSets
+kubectl expose deployment main   --port 80   # --type=ClusterIP  DEFAULT	Создать Service, по умолчанию тип ClusterIP
+kubectl expose deployment web1   --port 80	#Создать Service, по умолчанию тип ClusterIP
+kubectl expose deployment web2   --port 80	#Создать Service, по умолчанию тип ClusterIP
+kubectl expose deployment tomcat --port 8080	#Создать Service, по умолчанию тип ClusterIP
+
+kubectl get services -o wide	Показать данные всех Services
+
+kubectl apply -f ingress-hosts.yaml	Создать Ingress Rules из файла
+kubectl apply -f ingress-paths.yaml	Создать Ingress Rules из файла
+kubectl get ingress	Показать все созданные Ingress Rules
+kubectl describe ingress	Показать все созданные Ingress Rules подробно
+kubectl delete ns projectcontour	Стереть полностью Ingress Controller Contour
+
 
 
 
