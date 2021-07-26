@@ -1,7 +1,8 @@
 username: docker
 password: tcuser
 
-eksctl # Для работа Amazon EKS
+eksctl # Для создания кластера
+kubectl # Для управления класетором
 minikube # Для локального использования
 
 
