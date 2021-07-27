@@ -29,7 +29,7 @@ kubectl delete pods app-kuber-1  #Удалить pods
 kubectl describe pods app-kuber-1 # Посмотреть информацию pods
 kubectl exec -it app-kuber-1 -- /bin/bash # Войти внутрь контейнера
 kubectl logs app-kuber-1 # Логи Pod
-kubectl port-forward app-kuber-1 11111:8000 # Проброс портов 11111-локальный 8000-Pod
+kubectl port-forward app-kuber-1 11111:80 # Проброс портов 11111-локальный 8000-Pod (т.е. пример, с Амазона пробрасывается на ПК домашний 127.0.0.1:11111 - откроется сайт)
 kubectl apply -f pod-myweb-ver1.yaml # Создание Pod из дескриптора YAML
 kubectl delete -f pod-mywev-ver1.yaml  #Удалить pods
 
