@@ -23,7 +23,7 @@ eksctl create cluster -f mycluster.yaml #Создать кластер из YAML
 
 ########### Создание и управление pods
 kubectl get nodes  #посмотреть ноды
-kubectl run app-kuber-1 --generator=run-pod/v1 --image=httpd:latest --port=80 # Создание pods (скачивает контейнер из Docker Hub)
+kubectl run app-kuber-1 --image=httpd:latest --port=80 # Создание pods (скачивает контейнер из Docker Hub)
 kubectl get pods # Посмотреть статус pods
 kubectl delete pods app-kuber-1  #Удалить pods
 kubectl describe pods app-kuber-1 # Посмотреть информацию pods
