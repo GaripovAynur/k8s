@@ -8,15 +8,18 @@ kind: Deployment
 metadata:
   name: my-web-deployment # Название Deployment
   labels:
-    app : my-k8s-application # Теги
+    app : my-k8s-application # Теги, необязательно.
+
 spec:
   selector: # Какими Pods будет работать.
     matchLabels:
       project: kgb # Название проекта (пофиг что там)
+  
   template: # Какими Pods будет работь
     metadata:
       labels:
-        project: kgb
+        project: kgb # Должен совпасть то что выше.
+    
     spec:   # Собственно сам контейнер  
       containers:
         - name : kgb-web
