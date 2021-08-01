@@ -28,18 +28,20 @@ spec:
             - containerPort: 80
 
 ---
-apiVersion: autoscaling/v2beta1
-kind: HorizontalPodAutoscaler
+apiVersion: autoscaling/v2beta1 # Выше создается поды, данный модуль создает к этим подам Автоскалинг.
+kind: HorizontalPodAutoscaler 
 metadata:
-  name: my-autoscaling
+  name: my-autoscaling # Название autoscaling
 spec:
-  scaleTargetRef:
+  scaleTargetRef: # Должно совпасть с названием выше созданными Pod
     apiVersion: apps/v2beta1v1
     kind: Deployment
-    name: my-web-deployment-autoscaling
+    name: my-web-deployment-autoscaling 
+  
   minReplicas: 2
   maxReplicas: 6
-  metrics:
+  
+  metrics: # На основании чего автоскалить
   - type: Resource
     resource:
       name: cpu
