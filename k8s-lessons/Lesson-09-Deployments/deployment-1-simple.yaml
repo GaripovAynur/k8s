@@ -6,20 +6,20 @@
 apiVersion : apps/v1
 kind: Deployment
 metadata:
-  name: my-web-deployment
+  name: my-web-deployment # Название Deployment
   labels:
-    app : my-k8s-application
+    app : my-k8s-application # Теги
 spec:
-  selector:
+  selector: # Какими Pods будет работать.
     matchLabels:
-      project: kgb
-  template:
+      project: kgb # Название проекта (пофиг что там)
+  template: # Какими Pods будет работь
     metadata:
       labels:
         project: kgb
-    spec:
+    spec:   # Собственно сам контейнер  
       containers:
         - name : kgb-web
-          image: adv4000/k8sphp:latest
+          image: adv4000/k8sphp:latest # Указываем контейнер
           ports:
             - containerPort: 80
