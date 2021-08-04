@@ -54,15 +54,16 @@ kubectl delete deployment --all # Удалить все deployment
 #####################Создание и Управление - SERVICES - Это интерфейс к DEPLOYMENTS (ClusterIP, NodePort, LoadBalance? ExternalName(или DNS))
 kubectl create deployment denis-deployment --image adv4000/k8sphp:latest	#Создать Deployment из Docker Image adv4000/k8sphp:latest
 kubectl get deployment	#Показать все Depoyments
-kubectl scale deployment denis-deployment --replicas 4	#Создать ReplicaSets
-kubectl expose deployment denis-deployment --type=ClusterIP --port 80	#Создать Service типа ClusterIP для Deployment, можно достучаться только из внутри кластера пример  cutl 10.1.1.9
-kubectl expose deployment denis-deployment --type=NodePort --port 3123	#Создать Service типа NodePort для Deployment (kubectl describe nodes | grep ExternalIP - поиск используемых внешних ip, потом curl 123.124.13.12:3123 )
+kubectl scale deployment denis-deployment --replicas 4										#Создать ReplicaSets
+kubectl expose deployment denis-deployment --type=ClusterIP --port 80			#Создать Service типа ClusterIP для Deployment, можно достучаться только из внутри кластера пример  cutl 10.1.1.9
+kubectl expose deployment denis-deployment --type=NodePort --port 3123		#Создать Service типа NodePort для Deployment (kubectl describe nodes | grep ExternalIP - поиск используемых внешних ip, потом curl 123.124.13.12:3123 )
 kubectl expose deployment denis-deployment --type=LoadBalancer --port 80	#Создать Service типа LoadBalancer  для Deployment, только делается в Клоуде.
-kubectl get services #Показать все Services
-kubectl get svc	#Показать все Services
-kubectl describe nodes | grep ExternalIP	#Показать External IP со всех Worker Nodes
+kubectl apply -f service-3-loadbalancer-autoscaling.yaml
+kubectl get services 																											#Показать все Services
+kubectl get svc																														#Показать все Services
+kubectl describe nodes | grep ExternalIP																	#Показать External IP со всех Worker Nodes
 
-##################Создание и Управление - INGRESS Controllers 
+##################Создание и Управление - INGRESS Controllers
 kubectl apply -f https://projectcontour.io/quickstart/contour.yaml	#Создать Ingress Controller Contour
 kubectl get services -n projectcontour envoy -o wide	#Показать Ingess Controller Load Balancer данные
 kubectl create deployment main    --image=adv4000/k8sphp:latest 	#Создать Deployment
