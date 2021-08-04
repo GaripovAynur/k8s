@@ -24,7 +24,7 @@ spec:
           image: adv4000/k8sphp:latest
           ports:
             - containerPort: 80
-
+#### Выше создали контайнер с 3 подами, ниже к ниму лоадбалансер и связали контейнер с LoadBalancer, полями project: kgb   
 ---
 apiVersion: v1
 kind: Service
