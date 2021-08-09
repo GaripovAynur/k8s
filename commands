@@ -77,13 +77,13 @@ kubectl expose deployment web1   --port 80	#Создать Service, по умо�
 kubectl expose deployment web2   --port 80	#Создать Service, по умолчанию тип ClusterIP
 kubectl expose deployment tomcat --port 8080	#Создать Service, по умолчанию тип ClusterIP
 
-kubectl get services -o wide	Показать данные всех Services
+kubectl get services -o wide	#Показать данные всех Services
 
-kubectl apply -f ingress-hosts.yaml	Создать Ingress Rules из файла
-kubectl apply -f ingress-paths.yaml	Создать Ingress Rules из файла
-kubectl get ingress	Показать все созданные Ingress Rules
-kubectl describe ingress	Показать все созданные Ingress Rules подробно
-kubectl delete ns projectcontour	Стереть полностью Ingress Controller Contour
+kubectl apply -f ingress-hosts.yaml	#Создать Ingress Rules из файла
+kubectl apply -f ingress-paths.yaml	#Создать Ingress Rules из файла
+kubectl get ingress	#Показать все созданные Ingress Rules
+kubectl describe ingress	#Показать все созданные Ingress Rules подробно
+kubectl delete ns projectcontour	#Стереть полностью Ingress Controller Contour
 
 
 
