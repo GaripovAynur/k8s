@@ -76,14 +76,30 @@ kubectl expose deployment main   --port 80   # --type=ClusterIP  DEFAULT	Соз�
 kubectl expose deployment web1   --port 80	#Создать Service, по умолчанию тип ClusterIP
 kubectl expose deployment web2   --port 80	#Создать Service, по умолчанию тип ClusterIP
 kubectl expose deployment tomcat --port 8080	#Создать Service, по умолчанию тип ClusterIP
-
 kubectl get services -o wide	#Показать данные всех Services
-
 kubectl apply -f ingress-hosts.yaml	#Создать Ingress Rules из файла
 kubectl apply -f ingress-paths.yaml	#Создать Ingress Rules из файла
 kubectl get ingress	#Показать все созданные Ingress Rules
 kubectl describe ingress	#Показать все созданные Ingress Rules подробно
 kubectl delete ns projectcontour	#Стереть полностью Ingress Controller Contour
+
+
+############## Helm Charts
+helm version	#Пока версию Helm
+helm list	#Показать все задеплоенные Helm Releases
+helm search hub	#Показать Helm Chart с общего списка Hub
+helm search repo	#Показать Helm Chart из добавленных Repos
+helm install app1 Denis-Chart/	#Задеплоить Helm Chart app1 из директории Denis-Chart
+helm upgrade app1 Denis-Chart/ --set container.image=adv4000/k8sphp:version2	#Обновить Деплоймент app1
+helm create MyChart	#Сделать скелет Helm Chart в директории MyChart
+helm package Denis-Chart/	#Запаковать Helm Chart в tgz архив
+helm install app2 App-HelmChart-0.1.0.tgz	#Задеплоить Helm Chart app2 из архива
+helm delete app1	#Удалить Деплоймент Helm Chart app1
+helm uninstall app1	#Удалить Деплоймент Helm Chart app1
+helm repo add bitnami https://charts.bitnami.com/bitnami	#Добавить Helm Chart Repo от bitnami
+helm install my_website bitnami/apache -f my_values.yaml	#Задеплоить Helm Chart bitnami/apache с нашими переменными
+
+
 
 
 
