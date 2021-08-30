@@ -20,6 +20,12 @@ export AWS_DEFAULT_REGION=us-east-2
 eksctl create cluster --name denis-k8s # Создать кластер AWS
 eksctl create cluster -f mycluster.yaml #Создать кластер из YAML
 
+################# Как использовать kubectl с несколькими Kubernetes кластерами ##############
+
+cat ~/.kube/config 		# Конфигурационный файл
+kubectl config get-context 	# Посмотреть какие кластры были созданы
+kubectl use-context k8s-2 	# Переключить управление кластера на k8s-2
+
 
 ########### Создание и управление pods
 kubectl get nodes  #посмотреть ноды
@@ -59,7 +65,7 @@ kubectl expose deployment denis-deployment --type=ClusterIP --port 80			#Соз�
 kubectl expose deployment denis-deployment --type=NodePort --port 3123		#Создать Service типа NodePort для Deployment (kubectl describe nodes | grep ExternalIP - поиск используемых внешних ip, потом curl 123.124.13.12:3123 )
 kubectl expose deployment denis-deployment --type=LoadBalancer --port 80	#Создать Service типа LoadBalancer  для Deployment, только делается в Клоуде.
 kubectl apply -f service-3-loadbalancer-autoscaling.yaml
-kubectl get services 																											#Показать все Services
+kubectl get services																											#Показать все Services
 kubectl get svc																														#Показать все Services
 kubectl describe nodes | grep ExternalIP																	#Показать External IP со всех Worker Nodes
 
@@ -101,10 +107,6 @@ helm install my_website bitnami/apache -f my_values.yaml	#Задеплоить H
 
 
 
-
-
-
-
 minikube start --profile k8s-cluster-1 - создать кластер
 /home/aynur/.kube - хранятся конфигурационные файлы
 kubectl config get-contexts - посмотреть какие есть кластеры
@@ -127,12 +129,11 @@ kubectl apply -f kuber-pod.yaml # Создание Pod из дескриптор
 kubectl get pod app-kuber-1 -o yaml # Посмотреть параметры в виде yaml
 kubectl port-forward app-kuber-1 11111:8000 # Проброс портов 11111-локальный 8000-Pod
 kubectl logs app-kuber-1 # Логи Pod
+
 #### Запуск Dashboard UI ################
 kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
 kubectl proxy
 http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/.
-###
-
 
 ##################### Lesson 7  Метки, аннотации и пространства имён в Kubernetes ########################
 kubectl label po app-kuber-1 environment=dev #Добавить метку ключ-значение (environment=dev)
