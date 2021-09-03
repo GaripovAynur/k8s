@@ -5,8 +5,6 @@ eksctl # Для создания кластера
 kubectl # Для управления класетором
 minikube # Для локального использования
 
-
-
 ###################Поднятие Кластера в AWS Elastic Kubernetes Service - EKS####################
 https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html
 curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
@@ -34,7 +32,9 @@ kubectl get pods # Посмотреть статус pods
 kubectl delete pods app-kuber-1  #Удалить pods
 kubectl describe pods app-kuber-1 # Посмотреть информацию pods
 kubectl exec -it app-kuber-1 -- /bin/bash # Войти внутрь контейнера
+kubectl exec -it app-kuber-1 --container app-kuber-1 -- /bin/bash # Войти внутрь контейнера, если в одном Pod несколько контейнера
 kubectl logs app-kuber-1 # Логи Pod
+kubectl get pod app-kuber-1 -o yaml # Посмотреть параметры в виде yaml
 kubectl port-forward app-kuber-1 11111:80 # Проброс портов 11111-локальный 8000-Pod (т.е. пример, с Амазона пробрасывается на ПК домашний 127.0.0.1:11111 - откроется сайт)
 kubectl apply -f pod-myweb-ver1.yaml # Создание Pod из дескриптора YAML
 kubectl delete -f pod-mywev-ver1.yaml  #Удалить pods
@@ -105,30 +105,16 @@ helm uninstall app1	#Удалить Деплоймент Helm Chart app1
 helm repo add bitnami https://charts.bitnami.com/bitnami	#Добавить Helm Chart Repo от bitnami
 helm install my_website bitnami/apache -f my_values.yaml	#Задеплоить Helm Chart bitnami/apache с нашими переменными
 
-
-
-minikube start --profile k8s-cluster-1 - создать кластер
-/home/aynur/.kube - хранятся конфигурационные файлы
-kubectl config get-contexts - посмотреть какие есть кластеры
-kubectl config get-users - посмотреть какие есть пользоватли
-kubectl config set-credentials temp --username=temp --password=superroot - создать пользователя
-kubectl config use-context k8s-cluster-1 - переключить кластер
-kubectl get pods --all-namespaces - посмотреть все поды
-kubectl get nodes  - посмотреть ноды
-kubectl config delete-context k8s-cluster-1 - удалить кластер
+minikube start --profile k8s-cluster-1 # создать кластер
+/home/aynur/.kube # храняться конфигурационные файлы
+kubectl config get-contexts # посмотреть какие есть кластеры
+kubectl config get-users # посмотреть какие есть пользоватли
+kubectl config set-credentials temp --username=temp --password=superroot # создать пользователя
+kubectl config use-context k8s-cluster-1 # переключить кластер
+kubectl get pods --all-namespaces # посмотреть все поды
+kubectl get nodes  # посмотреть ноды
+kubectl config delete-context k8s-cluster-1 # удалить кластер
 kubectl apply -f sa-dash.yaml # Создание Pod из дескриптора YAML
-
-##################### Lesson 6 Создание объекта Pod. Запуск контейнеров в Kubernetes########################
-kubectl run app-kuber-1 --image=bokovets/kuber:0.1 --port=8000 # Создание pods (скачивает контейнер из Docker Hub)
-kubectl get pods # Посмотреть статус pods
-kubectl describe pods app-kuber-1 # Посмотреть информацию pods
-kubectl exec -it app-kuber-1 -- /bin/bash # Войти внутрь контейнера
-kubectl exec -it app-kuber-1 --container app-kuber-1 -- /bin/bash # Войти внутрь контейнера, если в одном Pod несколько контейнера
-nano kuber-pod.yaml # Создание Pod из дескриптора YAML (имя может быть любое)
-kubectl apply -f kuber-pod.yaml # Создание Pod из дескриптора YAML
-kubectl get pod app-kuber-1 -o yaml # Посмотреть параметры в виде yaml
-kubectl port-forward app-kuber-1 11111:8000 # Проброс портов 11111-локальный 8000-Pod
-kubectl logs app-kuber-1 # Логи Pod
 
 #### Запуск Dashboard UI ################
 kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
@@ -137,11 +123,22 @@ http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kube
 
 ##################### Lesson 7  Метки, аннотации и пространства имён в Kubernetes ########################
 kubectl label po app-kuber-1 environment=dev #Добавить метку ключ-значение (environment=dev)
-kubectl get po -L app, environment, run # Select по меткам
+kubectl get po --show-labels # Показать все Pods и их метки
+kubectl get po -L app, environment, run # Вывести колонку с метками app, environment, run
 kubectl get po -L '!run' # Select по меткам где нет run
 kubectl get po -l app=http-server # Выборка по конкретному ключу, можно также =!
 kubectl apply -f kuber-pod.yaml # Создание Pod из дескриптора YAML
-kubectl label nodes -l gpu=true # Метка nodes
-kubectl describe node minikube # Посмотреть информацию node
 kubectl delete po -l run-app-kuber-manual #удалить Pod run-app-kuber-manual
-kubectl get pods --all-namespaces - посмотреть все поды
+
+/kubernets/k8s/BAKAVETS/lesson-07/kuber-pod.yaml # Создать метку с yaml
+kubectl label nodes -l gpu=true # Присвоить метку к Nodes gpu=true
+kubectl get nodes -l gpu-true # Выборка Nods по метке
+
+kubectl annotate pod app-kuber-2 company_name/creator_email="ku@gmail.com" # Аннотация, это просто комментацрий к объекту. Select нельзя сделать.
+kubectl describe po app-kuber-2 # Посмотреть аннатацию
+
+kubectl get namespace #Просмотреть все пространства имен
+kubectl get pods --all-namespaces #посмотреть все поды
+kubectl apply -f pod.yaml --namespace=project1 # При создании Pod из YAML присваеваем namespace (также namespace можно указать в самом файлу YAML)
+kubens # Показывает все namespace
+kubens project1 # Переключает namespace на project1
