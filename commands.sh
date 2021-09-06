@@ -130,14 +130,16 @@ kubectl get po -l app=http-server # Выборка по конкретному �
 kubectl apply -f kuber-pod.yaml # Создание Pod из дескриптора YAML
 kubectl delete po -l run-app-kuber-manual #удалить Pod run-app-kuber-manual
 
-/kubernets/k8s/BAKAVETS/lesson-07/kuber-pod.yaml # Создать метку с yaml
-kubectl label nodes -l gpu=true # Присвоить метку к Nodes gpu=true
-kubectl get nodes -l gpu-true # Выборка Nods по метке
+/kubernets/k8s/BAKAVETS/lesson-07/kuber-pod.yaml # Создать метку для Pods с помощью манифестка yaml
+/kubernets/k8s/BAKAVETS/lesson-07/kuber-pod-with-gpu.yaml # nodeSelector/Установить только на опеределенные Nods
+kubectl label nodes -l {название Nods} gpu=true # Присвоить метку к Nodes gpu=true
+kubectl get nodes -l gpu=true # Выборка Nods по метке
 
 kubectl annotate pod app-kuber-2 company_name/creator_email="ku@gmail.com" # Аннотация, это просто комментацрий к объекту. Select нельзя сделать.
 kubectl describe po app-kuber-2 # Посмотреть аннатацию
 
-kubectl get namespace #Просмотреть все пространства имен
+kubectl create namespace project1 # Создать namespace project1
+kubectl get namespace # Просмотреть все пространства имен
 kubectl get pods --all-namespaces #посмотреть все поды
 kubectl apply -f pod.yaml --namespace=project1 # При создании Pod из YAML присваеваем namespace (также namespace можно указать в самом файлу YAML)
 kubens # Показывает все namespace
