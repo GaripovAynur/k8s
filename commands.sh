@@ -27,6 +27,8 @@ kubectl use-context k8s-2 	# Переключить управление кла�
 
 ########### Создание и управление pods
 kubectl get nodes  #посмотреть ноды
+kubectl get pods -o wide #Показывает информацию о сетевых и днс именах
+kubectl edit pod app-kuber-1 # Редактировать под, можно поменять nginx 1.10 , например на 1.12
 kubectl run app-kuber-1 --image=httpd:latest --port=80 # Создание pods (скачивает контейнер из Docker Hub)
 kubectl get pods # Посмотреть статус pods
 kubectl delete pods app-kuber-1  #Удалить pods
@@ -56,7 +58,9 @@ kubectl apply -f deployment-1-simple.yaml # 1 - реплика
 kubectl apply -f deployment-2-replicas.yaml # 3 - реплика
 kubectl apply -f deployment-3-autoscaling.yaml # Автомасштабирование
 kubectl delete deployment --all # Удалить все deployment
-
+									type: # Занчения для type при создании с помощью манифеста
+											RollingUpdate # Yдаляет старые модули и одновременно добавляет новые
+											Recreate # Yдаляет все старые модули перед созданием новых
 #####################Создание и Управление - SERVICES - Это интерфейс к DEPLOYMENTS (ClusterIP, NodePort, LoadBalance? ExternalName(или DNS))
 kubectl create deployment denis-deployment --image adv4000/k8sphp:latest	#Создать Deployment из Docker Image adv4000/k8sphp:latest
 kubectl get deployment	#Показать все Depoyments
@@ -65,6 +69,7 @@ kubectl expose deployment denis-deployment --type=ClusterIP --port 80			#Соз�
 kubectl expose deployment denis-deployment --type=NodePort --port 3123		#Создать Service типа NodePort для Deployment (kubectl describe nodes | grep ExternalIP - поиск используемых внешних ip, потом curl 123.124.13.12:3123 )
 kubectl expose deployment denis-deployment --type=LoadBalancer --port 80	#Создать Service типа LoadBalancer  для Deployment, только делается в Клоуде.
 kubectl apply -f service-3-loadbalancer-autoscaling.yaml
+k delete svc denis-deployment																							#Удалит
 kubectl get services																											#Показать все Services
 kubectl get svc																														#Показать все Services
 kubectl describe nodes | grep ExternalIP																	#Показать External IP со всех Worker Nodes
@@ -123,16 +128,17 @@ http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kube
 
 ##################### Lesson 7  Метки, аннотации и пространства имён в Kubernetes ########################
 kubectl label po app-kuber-1 environment=dev #Добавить метку ключ-значение (environment=dev)
-kubectl get po --show-labels # Показать все Pods и их метки
+kubectl get pods --show-labels # Показать все Pods и их метки
 kubectl get po -L app, environment, run # Вывести колонку с метками app, environment, run
 kubectl get po -L '!run' # Select по меткам где нет run
 kubectl get po -l app=http-server # Выборка по конкретному ключу, можно также =!
 kubectl apply -f kuber-pod.yaml # Создание Pod из дескриптора YAML
 kubectl delete po -l run-app-kuber-manual #удалить Pod run-app-kuber-manual
 
+
 /kubernets/k8s/BAKAVETS/lesson-07/kuber-pod.yaml # Создать метку для Pods с помощью манифестка yaml
 /kubernets/k8s/BAKAVETS/lesson-07/kuber-pod-with-gpu.yaml # nodeSelector/Установить только на опеределенные Nods
-kubectl label nodes -l {название Nods} gpu=true # Присвоить метку к Nodes gpu=true
+kubectl label nodes {название Nods} gpu=true # Присвоить метку к Nodes gpu=true
 kubectl get nodes -l gpu=true # Выборка Nods по метке
 
 kubectl annotate pod app-kuber-2 company_name/creator_email="ku@gmail.com" # Аннотация, это просто комментацрий к объекту. Select нельзя сделать.
@@ -140,7 +146,7 @@ kubectl describe po app-kuber-2 # Посмотреть аннатацию
 
 kubectl create namespace project1 # Создать namespace project1
 kubectl get namespace # Просмотреть все пространства имен
-kubectl get pods --all-namespaces #посмотреть все поды
+kubectl get pods --all-namespaces #посмотреть все поды по всем пространства имен.
 kubectl apply -f pod.yaml --namespace=project1 # При создании Pod из YAML присваеваем namespace (также namespace можно указать в самом файлу YAML)
 kubens # Показывает все namespace
 kubens project1 # Переключает namespace на project1

@@ -1,0 +1,13 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: my-web-deployment-autoscaling
+  labels:
+    app  : my-k8s-application
+    env  : prod
+    owner: DenisAstahov
+spec:
+#  replicas: 2   # Don't need this anymore as we are using HorizontalPodAutoscaler
+  selector:
+    matchLabels:
+      project: mossad
