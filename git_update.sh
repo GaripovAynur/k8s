@@ -2,5 +2,5 @@
 now=$(date +"%m-%d-%y")
  #git pull
  git add .
- git commit -am "$now"
+ git commit -m "$now"
  git push
