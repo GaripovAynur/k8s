@@ -150,3 +150,17 @@ kubectl get pods --all-namespaces #посмотреть все поды по в�
 kubectl apply -f pod.yaml --namespace=project1 # При создании Pod из YAML присваеваем namespace (также namespace можно указать в самом файлу YAML)
 kubens # Показывает все namespace
 kubens project1 # Переключает namespace на project1
+
+
+####################_________Skillbox_______________########################
+
+kubectl get serviceaccount # Показывает сервис аккаунты
+/var/run/secrets/kubernetes.io/serviceaccount/ # Хранятся в контейнере сертификаты от ServiceAccount
+kubectl get pod poder -o json	# Показывает полный манифест Pods
+k get serviceaccount default -o json	#Вывести данные ServiceAccount
+k get secret default-token-62nsr -o json #Вывести данные по токену ServiceAccount у default
+curl -k https://192.168.49.2:8443 -H "Authorization:Bearer $(kubectl get secret default-token-62nsr -o jsonpath='{.data.token}' | base64 -d)"  # Проверить права у пользователя
+kubectl get psp # Посмотреть PodSecurityPolicy
+kubectl run nginx --image=nginx -n default --as system:serviceaccount:default:nginx-sa # Создайте утилитой kubectl pod с nginx'ом под сервис-аккаунтом nginx-sa.
+
+minikube start --extra-config=apiserver.enable-admission-plugins=PodSecurityPolicy --addons=pod-security-policy
