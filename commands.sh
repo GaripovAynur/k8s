@@ -98,6 +98,7 @@ kubectl delete ns projectcontour	#Стереть полностью Ingress Cont
 ############## Helm Charts
 helm version	#Пока версию Helm
 helm list	#Показать все задеплоенные Helm Releases
+helm template . # Перейти в папку и запустить, после чего подставит значении и выводит на экран без деплоя
 helm search hub	#Показать Helm Chart с общего списка Hub
 helm search repo	#Показать Helm Chart из добавленных Repos
 helm install app1 Denis-Chart/	#Задеплоить Helm Chart app1 из директории Denis-Chart
@@ -153,7 +154,7 @@ kubens project1 # Переключает namespace на project1
 
 
 ####################_________Skillbox_______________########################
-
+minikube addons list
 kubectl get serviceaccount # Показывает сервис аккаунты
 /var/run/secrets/kubernetes.io/serviceaccount/ # Хранятся в контейнере сертификаты от ServiceAccount
 kubectl get pod poder -o json	# Показывает полный манифест Pods
@@ -162,5 +163,17 @@ k get secret default-token-62nsr -o json #Вывести данные по то�
 curl -k https://192.168.49.2:8443 -H "Authorization:Bearer $(kubectl get secret default-token-62nsr -o jsonpath='{.data.token}' | base64 -d)"  # Проверить права у пользователя
 kubectl get psp # Посмотреть PodSecurityPolicy
 kubectl run nginx --image=nginx -n default --as system:serviceaccount:default:nginx-sa # Создайте утилитой kubectl pod с nginx'ом под сервис-аккаунтом nginx-sa.
+
+###########################______QoS________########################################
+QoS - классы:
+	- Best Effort # Это когда НЕ задаются limit Request - в случае нехватки ресурса железо, убиваются первыми. 
+	- Burstable	  #	Когда limit > Request - средний приоритет на удаления.
+	- Guaranteed  # Когда limit == Request - высокий приоритет, удаляется в случае чего последними.
+kubectl get pods -o=jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.qosClass}{"\n"}{end}'  # Проверить, что под получил нужный класс QoS
+
+####################_____Metrics____####################
+ minikube addons enable metrics-server   # Установите metrics-server в кластер. Для minikube это можно сделать командой
+ kubectl top pods # Потребление ресурсов, работает только при наличии metrics-server
+ kubectl top nodes # Потребление ресурсов, работает только при наличии metrics-server
 
 minikube start --extra-config=apiserver.enable-admission-plugins=PodSecurityPolicy --addons=pod-security-policy
