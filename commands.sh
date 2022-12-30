@@ -177,3 +177,17 @@ kubectl get pods -o=jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.qo
  kubectl top nodes # Потребление ресурсов, работает только при наличии metrics-server
 
 minikube start --extra-config=apiserver.enable-admission-plugins=PodSecurityPolicy --addons=pod-security-policy
+
+
+
+###############Книга K8s в действии
+kubectl create -f kubia-deployment-v1.yaml --record     # --record - позволит записать данную команду в истории ревизий,
+kubectl rollout history deployment kubia                # истории ревизий
+kubectl rollout status deployment kubia                 # для проверки статуса развертывания
+kubectl rollout undo deployment kubia --to-revision=1   # Откат к определенной версии развертывания
+		#### Доступ к серверу API ####
+		kubectl proxy # Подключаемся к API на прямую, и будет держать сессию
+		curl localhost:8001 # Сервер откликается списком путей и  Группа API (298 стр)
+		
+		
+
