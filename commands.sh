@@ -191,6 +191,6 @@ kubectl rollout undo deployment kubia --to-revision=1   # Откат к опре
 		curl localhost:8001 # Сервер откликается списком путей и  Группа API (298 стр)	
 		
 kubectl get componentstatuses  # Проверка статуса компонентов плоскости управления
-		 
+kubectl get po -o custom-columns=POD:metadata.name,NODE:spec.nodeName --sort-by spec.nodeName -n kube-system	# Компоненты Kubernetes, работающие как модули	 
 		
 
