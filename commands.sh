@@ -26,8 +26,8 @@ kubectl use-context k8s-2 	# Переключить управление кла�
 
 
 ########### Создание и управление pods
+kubectl get events --watch # Просмотр событий, генерируемых контроллерами
 kubectl get pods --watch # Просмотр создаваемого и удаляемого модуля в реальном времени
-kubectl get nodes  #посмотреть ноды
 kubectl get pods -o wide #Показывает информацию о сетевых и днс именах
 kubectl edit pod app-kuber-1 # Редактировать под, можно поменять nginx 1.10 , например на 1.12
 kubectl run app-kuber-1 --image=httpd:latest --port=80 # Создание pods (скачивает контейнер из Docker Hub)
@@ -118,10 +118,8 @@ kubectl config get-contexts # посмотреть какие есть клас�
 kubectl config get-users # посмотреть какие есть пользоватли
 kubectl config set-credentials temp --username=temp --password=superroot # создать пользователя
 kubectl config use-context k8s-cluster-1 # переключить кластер
-kubectl get pods --all-namespaces # посмотреть все поды
-kubectl get nodes  # посмотреть ноды
 kubectl config delete-context k8s-cluster-1 # удалить кластер
-kubectl apply -f sa-dash.yaml # Создание Pod из дескриптора YAML
+
 
 #### Запуск Dashboard UI ################
 kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
@@ -146,16 +144,12 @@ kubectl get nodes -l gpu=true # Выборка Nods по метке
 kubectl annotate pod app-kuber-2 company_name/creator_email="ku@gmail.com" # Аннотация, это просто комментацрий к объекту. Select нельзя сделать.
 kubectl describe po app-kuber-2 # Посмотреть аннатацию
 
-kubectl create namespace project1 # Создать namespace project1
-kubectl get namespace # Просмотреть все пространства имен
-kubectl get pods --all-namespaces #посмотреть все поды по всем пространства имен.
 kubectl apply -f pod.yaml --namespace=project1 # При создании Pod из YAML присваеваем namespace (также namespace можно указать в самом файлу YAML)
 kubens # Показывает все namespace
 kubens project1 # Переключает namespace на project1
 
 
 ####################_________Skillbox_______________########################
-minikube addons list
 kubectl get serviceaccount # Показывает сервис аккаунты
 /var/run/secrets/kubernetes.io/serviceaccount/ # Хранятся в контейнере сертификаты от ServiceAccount
 kubectl get pod poder -o json	# Показывает полный манифест Pods
