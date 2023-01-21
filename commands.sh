@@ -39,12 +39,10 @@ kubectl exec -it app-kuber-1 --container app-kuber-1 -- /bin/bash # Войти �
 kubectl logs app-kuber-1 # Логи Pod
 kubectl get pod app-kuber-1 -o yaml # Посмотреть параметры в виде yaml
 kubectl port-forward app-kuber-1 11111:80 # Проброс портов 11111-локальный 8000-Pod (т.е. пример, с Амазона пробрасывается на ПК домашний 127.0.0.1:11111 - откроется сайт)
-kubectl apply -f pod-myweb-ver1.yaml # Создание Pod из дескриптора YAML
-kubectl delete -f pod-mywev-ver1.yaml  #Удалить pods
+
 
 ##############Создание и Управление - DEPLOYMENTS - Это одни и теже Поды на разных Нодах (Автоскелинг)
 kubectl create deployment denis-deployment --image adv4000/k8sphp:latest #Создать deployment
-kubectl get deploy
 kubectl describe deployments denis-deployment # Можно посмотреть полную информацию о deployments (названия контейнера, image и т.д.  ).
 kubectl scale deployment denis-deployment --replicas 4 # Масштабировать deployment denis-deployment на 4 nodes (последующим если удалить, автоматический будет поддерживаться 4 Pods)
 kubectl autoscale deployment denis-deployment --min=4 --max=6 --cpu-percent=80 # (horizontalpodautoscaler - hpa) Всегда будет поддерживать от 4 до 6 Pods, в зависимости от загруженность ЦП
@@ -69,10 +67,8 @@ kubectl scale deployment denis-deployment --replicas 4										#Создать 
 kubectl expose deployment denis-deployment --type=ClusterIP --port 80			#Создать Service типа ClusterIP для Deployment, можно достучаться только из внутри кластера пример  cutl 10.1.1.9
 kubectl expose deployment denis-deployment --type=NodePort --port 3123		#Создать Service типа NodePort для Deployment (kubectl describe nodes | grep ExternalIP - поиск используемых внешних ip, потом curl 123.124.13.12:3123 )
 kubectl expose deployment denis-deployment --type=LoadBalancer --port 80	#Создать Service типа LoadBalancer  для Deployment, только делается в Клоуде.
-kubectl apply -f service-3-loadbalancer-autoscaling.yaml
-k delete svc denis-deployment																							#Удалит
-kubectl get services																											#Показать все Services
-kubectl get svc																														#Показать все Services
+kubectl apply -f service-3-loadbalancer-autoscaling.yaml																						#Удалит
+																											#Показать все Services
 kubectl describe nodes | grep ExternalIP																	#Показать External IP со всех Worker Nodes
 
 ##################Создание и Управление - INGRESS Controllers
@@ -88,15 +84,10 @@ kubectl expose deployment main   --port 80   # --type=ClusterIP  DEFAULT	Соз�
 kubectl expose deployment web1   --port 80	#Создать Service, по умолчанию тип ClusterIP
 kubectl expose deployment web2   --port 80	#Создать Service, по умолчанию тип ClusterIP
 kubectl expose deployment tomcat --port 8080	#Создать Service, по умолчанию тип ClusterIP
-kubectl get services -o wide	#Показать данные всех Services
-kubectl apply -f ingress-hosts.yaml	#Создать Ingress Rules из файла
-kubectl apply -f ingress-paths.yaml	#Создать Ingress Rules из файла
-kubectl get ingress	#Показать все созданные Ingress Rules
-kubectl describe ingress	#Показать все созданные Ingress Rules подробно
 kubectl delete ns projectcontour	#Стереть полностью Ingress Controller Contour
 
 
-############## Helm Charts
+############## Helm Charts ################
 helm version	#Пока версию Helm
 helm list	#Показать все задеплоенные Helm Releases
 helm template . # Перейти в папку и запустить, после чего подставит значении и выводит на экран без деплоя
@@ -112,8 +103,7 @@ helm uninstall app1	#Удалить Деплоймент Helm Chart app1
 helm repo add bitnami https://charts.bitnami.com/bitnami	#Добавить Helm Chart Repo от bitnami
 helm install my_website bitnami/apache -f my_values.yaml	#Задеплоить Helm Chart bitnami/apache с нашими переменными
 
-minikube start --profile k8s-cluster-1 # создать кластер
-/home/aynur/.kube # храняться конфигурационные файлы
+############ kubectl config ############
 kubectl config get-contexts # посмотреть какие есть кластеры
 kubectl config get-users # посмотреть какие есть пользоватли
 kubectl config set-credentials temp --username=temp --password=superroot # создать пользователя
@@ -142,9 +132,8 @@ kubectl label nodes {название Nods} gpu=true # Присвоить мет
 kubectl get nodes -l gpu=true # Выборка Nods по метке
 
 kubectl annotate pod app-kuber-2 company_name/creator_email="ku@gmail.com" # Аннотация, это просто комментацрий к объекту. Select нельзя сделать.
-kubectl describe po app-kuber-2 # Посмотреть аннатацию
 
-kubectl apply -f pod.yaml --namespace=project1 # При создании Pod из YAML присваеваем namespace (также namespace можно указать в самом файлу YAML)
+
 kubens # Показывает все namespace
 kubens project1 # Переключает namespace на project1
 
@@ -171,7 +160,6 @@ kubectl get pods -o=jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.qo
  kubectl top pods # Потребление ресурсов, работает только при наличии metrics-server
  kubectl top nodes # Потребление ресурсов, работает только при наличии metrics-server
 
-minikube start --extra-config=apiserver.enable-admission-plugins=PodSecurityPolicy --addons=pod-security-policy
 
 
 
@@ -186,6 +174,9 @@ kubectl rollout undo deployment kubia --to-revision=1   # Откат к опре
 		curl localhost:8001 # Сервер откликается списком путей и  Группа API (298 стр)	
 		
 kubectl get componentstatuses  # Проверка статуса компонентов плоскости управления
-kubectl get po -o custom-columns=POD:metadata.name,NODE:spec.nodeName --sort-by spec.nodeName -n kube-system	# Компоненты Kubernetes, работающие как модули	 
+kubectl get po -o custom-columns=POD:metadata.name,NODE:spec.nodeName --sort-by spec.nodeName -n kube-system	# Компоненты Kubernetes, работающие как модули	
+
+############kubeadm#############
+kubeadm certs check-expiratio # посмотреть когда выходит действия сертификата
 		
 
