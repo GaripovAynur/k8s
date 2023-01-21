@@ -1,9 +1,6 @@
-username: docker
-password: tcuser
 
 eksctl # Для создания кластера
-kubectl # Для управления класетором
-minikube # Для локального использования
+
 
 ###################Поднятие Кластера в AWS Elastic Kubernetes Service - EKS####################
 https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html
@@ -178,5 +175,5 @@ kubectl get po -o custom-columns=POD:metadata.name,NODE:spec.nodeName --sort-by 
 
 ############kubeadm#############
 kubeadm certs check-expiratio # посмотреть когда выходит действия сертификата
-		
+kubeadm certs renew	      # обновить сертификаты		
 
