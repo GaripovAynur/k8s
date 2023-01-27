@@ -1,3 +1,5 @@
+kubectl run tmp-pod --rm -i --tty --image nicolaka/netshoot -- /bin/bash  # Под для проверки сети
+
 
 eksctl # Для создания кластера
 
