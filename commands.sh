@@ -101,6 +101,7 @@ helm delete app1	#Удалить Деплоймент Helm Chart app1
 helm uninstall app1	#Удалить Деплоймент Helm Chart app1
 helm repo add bitnami https://charts.bitnami.com/bitnami	#Добавить Helm Chart Repo от bitnami
 helm install my_website bitnami/apache -f my_values.yaml	#Задеплоить Helm Chart bitnami/apache с нашими переменными
+helm inspect values ceph-csi/seph-csi-rbd > cephrbd.yml 	#Перенести содержимое helm chart
 
 ############ kubectl config ############
 kubectl config get-contexts # посмотреть какие есть кластеры
