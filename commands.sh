@@ -54,8 +54,6 @@ kubectl set image deployment/denis-deployment k8sphp=adv4000/k8sphp:version2 --r
 kubectl rollout undo deployment/denis-deployment --to-revision=3 # Возвращает на шаг назад из adv4000/k8sphp:version2 на adv4000/k8sphp:version1
 kubectl rollout restart deployment/denis-deployment # Пересоздается новый deployment/denis-deployment
 kubectl apply -f deployment-1-simple.yaml # 1 - реплика
-kubectl apply -f deployment-2-replicas.yaml # 3 - реплика
-kubectl apply -f deployment-3-autoscaling.yaml # Автомасштабирование
 kubectl delete deployment --all # Удалить все deployment
 									type: # Занчения для type при создании с помощью манифеста
 											RollingUpdate # Yдаляет старые модули и одновременно добавляет новые
@@ -66,7 +64,6 @@ kubectl get deployment	#Показать все Depoyments
 kubectl scale deployment denis-deployment --replicas 4										#Создать ReplicaSets
 kubectl expose deployment denis-deployment --type=ClusterIP --port 80			#Создать Service типа ClusterIP для Deployment, можно достучаться только из внутри кластера пример  cutl 10.1.1.9
 kubectl expose deployment denis-deployment --type=NodePort --port 3123		#Создать Service типа NodePort для Deployment (kubectl describe nodes | grep ExternalIP - поиск используемых внешних ip, потом curl 123.124.13.12:3123 )
-kubectl expose deployment denis-deployment --type=LoadBalancer --port 80	#Создать Service типа LoadBalancer  для Deployment, только делается в Клоуде.
 kubectl apply -f service-3-loadbalancer-autoscaling.yaml																						#Удалит
 																											#Показать все Services
 kubectl describe nodes | grep ExternalIP																	#Показать External IP со всех Worker Nodes
@@ -75,15 +72,8 @@ kubectl describe nodes | grep ExternalIP																	#Показать Exter
 kubectl apply -f https://projectcontour.io/quickstart/contour.yaml	#Создать Ingress Controller Contour
 kubectl get services -n projectcontour envoy -o wide	#Показать Ingess Controller Load Balancer данные
 kubectl create deployment main    --image=adv4000/k8sphp:latest 	#Создать Deployment
-kubectl create deployment web1    --image=adv4000/k8sphp:version1	#Создать Deployment
-kubectl create deployment web2    --image=adv4000/k8sphp:version2	#Создать Deployment
 kubectl scale deployment main    --replicas 2	#Создать ReplicaSets
-kubectl scale deployment web1    --replicas 2	#Создать ReplicaSets
-kubectl scale deployment web2    --replicas 2	#Создать ReplicaSets
 kubectl expose deployment main   --port 80   # --type=ClusterIP  DEFAULT	Создать Service, по умолчанию тип ClusterIP
-kubectl expose deployment web1   --port 80	#Создать Service, по умолчанию тип ClusterIP
-kubectl expose deployment web2   --port 80	#Создать Service, по умолчанию тип ClusterIP
-kubectl expose deployment tomcat --port 8080	#Создать Service, по умолчанию тип ClusterIP
 kubectl delete ns projectcontour	#Стереть полностью Ingress Controller Contour
 
 
@@ -125,7 +115,6 @@ kubectl get pods --show-labels # Показать все Pods и их метки
 kubectl get po -L app, environment, run # Вывести колонку с метками app, environment, run
 kubectl get po -L '!run' # Select по меткам где нет run
 kubectl get po -l app=http-server # Выборка по конкретному ключу, можно также =!
-kubectl apply -f kuber-pod.yaml # Создание Pod из дескриптора YAML
 kubectl delete po -l run-app-kuber-manual #удалить Pod run-app-kuber-manual
 
 
