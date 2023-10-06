@@ -1,0 +1,77 @@
+spring-services:
+  service1: 
+    image: myapp/service1
+    limits_memory: "512Mi"
+  service2:
+    image: myapp/service2
+    limits_memory: "256Mi"
+- - -
+#################################
+
+{{- range $name, $config := index .Values.spring-services }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: {{ $name }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: {{ $name }}
+    spec:
+      containers:
+        - name: {{ $name }}
+          image: {{ $config.image }}
+          resources:
+            limits:
+              memory: {{ $config.limits_memory }}
+- - -
+################################# Вывод
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service1
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: service1
+    spec:
+      containers:
+        - name: service1
+          image: myapp/service1
+          resources:
+            limits:
+              memory: "512Mi"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service2
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: service2
+    spec:
+      containers:
+        - name: service2
+          image: myapp/service2
+          resources:
+            limits:
+              memory: "256Mi"
