@@ -171,5 +171,6 @@ kubectl get po -o custom-columns=POD:metadata.name,NODE:spec.nodeName --sort-by 
 
 ############kubeadm#############
 kubeadm certs check-expiratio # посмотреть когда выходит действия сертификата
-kubeadm certs renew	      # обновить сертификаты		
+kubeadm certs renew	      # обновить сертификаты
+kubeadm token create --print-join-command # сгенерировать команду присоединения ноды
 
