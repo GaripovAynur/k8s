@@ -174,3 +174,10 @@ kubeadm certs check-expiratio # посмотреть когда выходит �
 kubeadm certs renew	      # обновить сертификаты
 kubeadm token create --print-join-command # сгенерировать команду присоединения ноды
 
+
+###### Полезные плюшки
+kubectl create secret tls helpms --cert=./help.crt --key=help.key -n dev-pv  # Подгрузить сертификаты в секреты
+
+
+
+
