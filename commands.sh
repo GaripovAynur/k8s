@@ -172,7 +172,9 @@ kubectl get po -o custom-columns=POD:metadata.name,NODE:spec.nodeName --sort-by 
 ############kubeadm#############
 kubeadm certs check-expiratio # посмотреть когда выходит действия сертификата
 kubeadm certs renew	      # обновить сертификаты
-kubeadm token create --print-join-command # сгенерировать команду присоединения ноды
+kubeadm reset --cri-socket unix:///var/run/cri-dockerd.sock # выполняется на той ноде которую хотим вывести из кластера (перед этим нужно выполнить kubectl delete node worker-09)
+kubeadm token create --print-join-command # на master-01 сгенерировать команду присоединения ноды (после чего можно добавить новую ноду)
+
 
 
 ###### Полезные плюшки
