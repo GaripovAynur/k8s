@@ -181,5 +181,7 @@ kubeadm token create --print-join-command # на master-01 сгенериров�
 kubectl create secret tls helpms --cert=./help.crt --key=help.key -n dev-pv  # Подгрузить сертификаты в секреты
 
 
-
+##### Загрузить секреты из докера, и не обязательно указывать imagePullSecrets каждый раз, когда скачиваешь с закрытых репозиторий 
+kubectl create secret generic common-image-pull-secret --from-file=.dockerconfigjson=$HOME/.docker/config.json --type=kubernetes.io/dockerconfigjson --dry-run=client -o yaml -n $K8S_NAMESPACE | kubectl apply -n $K8S_NAMESPACE -f -
+kubectl patch serviceaccount default -p "{\"imagePullSecrets\": [{\"name\": \"common-image-pull-secret\"}]}" -n $K8S_NAMESPACE
 
