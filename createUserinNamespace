@@ -1,0 +1,42 @@
+#Требуется для отдельного пользователя создать kubeconfig для подключения к кластеру кубер на один опеределенный неймспейc inportal cо всем привелегенными правами на этот неймспейс
+
+#1. Создать ServiceAccount
+kubectl create sa inportal-admin -n inportal
+
+#2. Создать RoleBinding для admin в namespace inportal
+
+kubectl create rolebinding inportal-admin-binding \
+  --clusterrole=admin \
+  --serviceaccount=inportal:inportal-admin \
+  --namespace=inportal
+
+#3. Создать секрет для токена (если токен не был создан автоматически)
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: inportal-admin-token
+  namespace: inportal
+  annotations:
+    kubernetes.io/service-account.name: "inportal-admin"
+type: kubernetes.io/service-account-token
+EOF
+
+#4. Получить токен из созданного секрета
+TOKEN=$(kubectl get secret inportal-admin-token -n inportal -o jsonpath='{.data.token}' | base64 --decode)
+
+#5. Получить cluster и server URL
+CLUSTER_NAME=$(kubectl config view --minify -o jsonpath='{.clusters[0].name}')
+SERVER=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
+    
+#6. Получить CA-контент (если требуется)
+kubectl get secret inportal-admin-token -n inportal -o jsonpath='{.data.ca\.crt}' | base64 --decode > ca.crt
+
+#7. Создать kubeconfig
+kubectl config set-cluster $CLUSTER_NAME --server=$SERVER --certificate-authority=ca.crt --kubeconfig=inportal.kubeconfig
+kubectl config set-credentials inportal-admin --token=$TOKEN --kubeconfig=inportal.kubeconfig
+kubectl config set-context inportal-context --cluster=$CLUSTER_NAME --namespace=inportal --user=inportal-admin --kubeconfig=inportal.kubeconfig
+kubectl config use-context inportal-context --kubeconfig=inportal.kubeconfig
+    
+#8. Проверка
+KUBECONFIG=inportal.kubeconfig kubectl get pods
